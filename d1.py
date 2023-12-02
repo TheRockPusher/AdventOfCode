@@ -1,21 +1,21 @@
 import re
 
 # read input file
-with open("Python/AdventOfCode/d1input.txt") as f:
-    linefile = f.readlines()
+with open("d1input.txt") as f:
+    lineFile = f.readlines()
 
 # part one
 s = 0
-for line in linefile:
+for line in lineFile:
     dig_list = [x for x in line if x.isdigit()]
     if dig_list:
         s += int(dig_list[0] + dig_list[-1])
-print(s)
+print(f"Result of part 1 -> {s}")
 
 
 # part two
-regexstart = "^.*?(one|two|three|four|five|six|seven|eight|nine|[1-9]).*"
-regexend = "^.*(one|two|three|four|five|six|seven|eight|nine|[1-9]).*?"
+regexStart = "^.*?(one|two|three|four|five|six|seven|eight|nine|[1-9]).*"
+regexEnd = "^.*(one|two|three|four|five|six|seven|eight|nine|[1-9]).*?"
 dict_numb = {
     "one": "1",
     "two": "2",
@@ -36,11 +36,11 @@ def to_num(n: str) -> str:
     return dict_numb[n]
 
 
-for line in linefile:
-    firstRegex = re.search(regexstart, line)
-    lastRegex = re.search(regexend, line)
+for line in lineFile:
+    firstRegex = re.search(regexStart, line)
+    lastRegex = re.search(regexEnd, line)
     if firstRegex and lastRegex:
         firstDigit = firstRegex.group(1)
         lastDigit = lastRegex.group(1)
         s2 += int(f"{to_num(firstDigit)}{to_num(lastDigit)}")
-print(s2)
+print(f"result of part 2 -> {s2}")
