@@ -1,17 +1,24 @@
+from typing import Optional
+
 with open("inputs/d3input.txt") as f:
     lineFiles = f.readlines()
 
 
-def get_symbol_coordinates(text: list[str]) -> list[tuple[int, int]]:
+def get_symbol_coordinates(
+    text: list[str], gear: Optional[list[str]] = None
+) -> list[tuple[int, int]]:
     res = []
     for y_pos, line in enumerate(lineFiles):
-        res.extend(
-            [
-                (pos, y_pos)
-                for pos, char in enumerate(line)
-                if not char.isdigit() and char != "."
-            ][:-1]
-        )
+        if gear:
+            res.extend([(pos, y_pos) for pos, char in enumerate(line) if char in gear])
+        else:
+            res.extend(
+                [
+                    (pos, y_pos)
+                    for pos, char in enumerate(line)
+                    if not char.isdigit() and char != "."
+                ][:-1]
+            )
     return res
 
 
@@ -58,3 +65,16 @@ s_coord = get_symbol_coordinates(lineFiles)
 num_coord = get_num_coord(s_coord)
 nums = get_num(num_coord, lineFiles)
 print(f"Result of part 1 -> {sum(nums)}")
+
+# part two -> each coordinate gear gets 9 coordinate nums
+g_coord = get_symbol_coordinates(lineFiles, ["*"])
+nums_gear = []
+for i in g_coord:
+    num_gear = get_num_coord([i])
+    nums_gear.append(get_num(num_gear, lineFiles))
+r = 0
+for j in nums_gear:
+    if len(j) == 2:
+        r += j[0] * j[1]
+
+print(f"Result of part 2 -> {r}")
