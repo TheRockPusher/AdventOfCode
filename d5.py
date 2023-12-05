@@ -46,15 +46,11 @@ def mapped(seed: int, M: list[list[int]]):
 
 
 seedLocation: list[int] = []
+mapList = [sts, stf, ftw, wtl, ltt, tth, htl]
 for seed in seeds:
-    seedLocation.append(
-        mapped(
-            mapped(
-                mapped(mapped(mapped(mapped(mapped(seed, sts), stf), ftw), wtl), ltt),
-                tth,
-            ),
-            htl,
-        )
-    )
+    curr = seed
+    for m in mapList:
+        curr = mapped(curr, m)
+    seedLocation.append(curr)
 
-print(min(seedLocation))
+print(f"Result of part1 -> {min(seedLocation)}")
