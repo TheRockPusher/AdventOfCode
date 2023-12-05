@@ -1,4 +1,5 @@
 import time
+
 with open("inputs/d5input.txt") as f:
     lineFiles = f.readlines()
 
@@ -58,3 +59,33 @@ def get_seedLocation(seeds: list[int]) -> list[int]:
 
 
 print(f"Result of part1 -> {min(get_seedLocation(seeds))}")
+
+
+def reversed_mapped(location, M):
+    for m in M:
+        if location >= m[0] and location < (m[0] + m[2]):
+            return location - m[3]
+    return location
+
+
+def reversed_get_seedLocation(seeds: list[int]) -> tuple[int, int]:
+    mapList = [htl, tth, ltt, wtl, ftw, stf, sts]
+    seed = 0
+    possibleLocation = 0
+    time_start = time.time()
+    while not seed:
+        possibleSeed = possibleLocation
+        for m in mapList:
+            possibleSeed = reversed_mapped(possibleSeed, m)
+
+        for s in range(0, len(seeds) - 1, 2):
+            if possibleSeed > seeds[s] and possibleSeed < (seeds[s] + seeds[s + 1]):
+                seed = possibleSeed
+                print(f"time for processing = {round(time.time()- time_start)}")
+        possibleLocation += 1
+
+    return seed, possibleLocation - 1
+
+
+result = reversed_get_seedLocation(seeds)
+print(f"Result of part2 -> location {result[1]} for seed {result[0]}")
