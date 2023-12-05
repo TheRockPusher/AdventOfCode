@@ -1,3 +1,4 @@
+import time
 with open("inputs/d5input.txt") as f:
     lineFiles = f.readlines()
 
@@ -45,12 +46,15 @@ def mapped(seed: int, M: list[list[int]]):
     return seed
 
 
-seedLocation: list[int] = []
-mapList = [sts, stf, ftw, wtl, ltt, tth, htl]
-for seed in seeds:
-    curr = seed
-    for m in mapList:
-        curr = mapped(curr, m)
-    seedLocation.append(curr)
+def get_seedLocation(seeds: list[int]) -> list[int]:
+    seedLocation: list[int] = []
+    mapList = [sts, stf, ftw, wtl, ltt, tth, htl]
+    for seed in seeds:
+        curr = seed
+        for m in mapList:
+            curr = mapped(curr, m)
+        seedLocation.append(curr)
+    return seedLocation
 
-print(f"Result of part1 -> {min(seedLocation)}")
+
+print(f"Result of part1 -> {min(get_seedLocation(seeds))}")
