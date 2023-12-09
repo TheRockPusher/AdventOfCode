@@ -9,13 +9,17 @@ def get_down_sequence(nums: list[int]) -> list[int]:
     return res
 
 
-def get_up_sequence(downList: list[list[int]]) -> list[list[int]]:
+def get_up_sequence(downList: list[list[int]], Left: bool = False) -> list[list[int]]:
     downList[-1].append(0)
     lastNum = 0
     l_downList = len((downList))
     for i, nums in enumerate(reversed(downList[:-1])):
-        lastNum = lastNum + nums[-1]
-        downList[l_downList - i - 2].append(lastNum)
+        if Left:
+            lastNum = nums[0] - lastNum
+            downList[l_downList - i - 2].insert(0, lastNum)
+        else:
+            lastNum = lastNum + nums[-1]
+            downList[l_downList - i - 2].append(lastNum)
     return downList
 
 
@@ -30,16 +34,14 @@ def get_total_down_sequence(line: list[int]) -> list[list[int]]:
     return res
 
 
-r = 0
+r_p1 = 0
+r_p2 = 0
 for line in lineFiles:
     downRes = get_total_down_sequence([int(i) for i in line.split()])
     upRes = get_up_sequence(downRes)
-    r += upRes[0][-1]
+    upResLeft = get_up_sequence(downRes, True)
+    r_p1 += upRes[0][-1]
+    r_p2 += upResLeft[0][0]
 
-print(f"Result of part 1 -> {r}")
-
-# downResTest = get_total_down_sequence([int(i) for i in lineFiles[0].split()])
-# print(downResTest)
-
-# upResTest = get_up_sequence(downResTest)
-# print(upResTest)
+print(f"Result of part 1 -> {r_p1}")
+print(f"Result of part 2 -> {r_p2}")
