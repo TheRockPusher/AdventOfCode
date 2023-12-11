@@ -2,7 +2,6 @@ with open("inputs/d11input.txt") as f:
     lineFiles = f.readlines()
 
 
-# find all ocurences of galaxies
 def find_galaxy(file: list[str]) -> list[tuple[int, int]]:
     res = []
     for i, line in enumerate(file):
