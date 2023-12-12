@@ -4,6 +4,7 @@ from functools import cache
 with open("inputs/d12input.txt") as f:
     lineFiles = f.readlines()
 
+
 @cache
 def arrange_count(text: str, grp: tuple[int, ...]) -> int:
     if len(text) < (sum(grp) + len(grp) - 1) or sum(grp) < text.count("#"):
@@ -25,23 +26,23 @@ def arrange_count(text: str, grp: tuple[int, ...]) -> int:
     ) * arrange_count(text[grp[0] + 1 :], grp[1:])
 
 
-def main_result(lineFiles, multiplier = 1 ,prints = False):
-    res = 0    
+def main_result(lineFiles, multiplier=1, prints=False):
+    res = 0
     lineFiles = sorted(lineFiles, key=lambda x: len(x))
     for l_index, line in enumerate(lineFiles):
         lineList = line.split()
-        group = tuple(int(i) for i in lineList[1].split(','))*multiplier
-        textList = ((lineList[0]+"?")*multiplier)[:-1]
+        group = tuple(int(i) for i in lineList[1].split(",")) * multiplier
+        textList = ((lineList[0] + "?") * multiplier)[:-1]
         if prints:
-            print(
-                f"text->{textList}  group -> {group}"
-            )
+            print(f"text->{textList}  group -> {group}")
         pr = res
         res += arrange_count(textList, group)
         if prints:
             print(f"line {l_index} res -> {res-pr}")
     return res
 
+
 start_time = total_time = time.time()
 print(f"Result of part1 -> {main_result(lineFiles)} time -> {time.time()-start_time}s")
-print(f"Result of part2 -> {main_result(lineFiles, multiplier=5)} time -> {time.time()-start_time}s")
+resP2 = main_result(lineFiles, multiplier=5)
+print(f"Result of part2 -> {resP2} time -> {time.time()-start_time}s")
