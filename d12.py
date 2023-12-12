@@ -1,9 +1,10 @@
 import time
+from functools import cache
 
 with open("inputs/d12input.txt") as f:
     lineFiles = f.readlines()
 
-
+@cache
 def arrange_count(text: str, grp: tuple[int, ...]) -> int:
     if len(text) < (sum(grp) + len(grp) - 1) or sum(grp) < text.count("#"):
         return 0
@@ -19,29 +20,28 @@ def arrange_count(text: str, grp: tuple[int, ...]) -> int:
         return arrange_count(text[: grp[0]], grp[:1]) * arrange_count(
             text[grp[0] + 1 :], grp[1:]
         )
-
-    # print(f"{arrange_count(text[1:], grp)}")
-    # print(f"{arrange_count(text[: grp[0]], grp[:1])}")
-    # print(f"{arrange_count(text[grp[0] + 1:], grp[1:])}")
-
     return arrange_count(text[1:], grp) + arrange_count(
         text[: grp[0]], grp[:1]
     ) * arrange_count(text[grp[0] + 1 :], grp[1:])
 
 
-res = 0
-start_time = total_time = time.time()
-lineFiles = sorted(lineFiles, key=lambda x: len(x))
-# lineFiles = ["???  1,2"]
-# lineFiles = ["?#?.#????#?.???.?#  3,3,2,1,1,2"]
-# lineFiles = ["#?.?#???. 4"]
-for l_index, line in enumerate(lineFiles):
-    lineList = line.split()
-    print(
-        f"text->{lineList[0]}  group -> {tuple(int(i) for i in lineList[1].split(','))}"
-    )
-    pr = res
-    res += arrange_count(lineList[0], tuple(int(i) for i in lineList[1].split(",")))
-    print(f"line {l_index} res -> {res-pr}")
+def main_result(lineFiles, multiplier = 1 ,prints = False):
+    res = 0    
+    lineFiles = sorted(lineFiles, key=lambda x: len(x))
+    for l_index, line in enumerate(lineFiles):
+        lineList = line.split()
+        group = tuple(int(i) for i in lineList[1].split(','))*multiplier
+        textList = ((lineList[0]+"?")*multiplier)[:-1]
+        if prints:
+            print(
+                f"text->{textList}  group -> {group}"
+            )
+        pr = res
+        res += arrange_count(textList, group)
+        if prints:
+            print(f"line {l_index} res -> {res-pr}")
+    return res
 
-print(f"Result of part1 -> {res}\n time -> {time.time()-start_time}s")
+start_time = total_time = time.time()
+print(f"Result of part1 -> {main_result(lineFiles)} time -> {time.time()-start_time}s")
+print(f"Result of part2 -> {main_result(lineFiles, multiplier=5)} time -> {time.time()-start_time}s")
