@@ -131,5 +131,6 @@ for p, pattern in enumerate(patterns):
         else (list(smudgersCol.keys())[0] + 1)
     )
     # print(f"Pattern -> {p}, row/col -> {rows}/{col}")
-    # print(f"Pattern -> {p}, smudger -> {smudgersRows}/{smudgersCol} distance{distance}")
+    # print(f"Pattern -> {p}, smudger -> \
+    # {smudgersRows}/{smudgersCol} distance{distance}")
 print(f"Result of part 2 -> {res}")
