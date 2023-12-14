@@ -1,4 +1,4 @@
-with open("inputs/d6input.txt") as f:
+with open("inputs/d06input.txt") as f:
     lineFiles = f.readlines()
 
 td_tuple = [

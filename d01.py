@@ -1,7 +1,7 @@
 import re
 
 # read input file
-with open("inputs/d1input.txt") as f:
+with open("inputs/d01input.txt") as f:
     lineFile = f.readlines()
 
 # part one

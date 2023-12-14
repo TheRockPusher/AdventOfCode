@@ -1,6 +1,6 @@
 import re
 
-with open("inputs/d2input.txt") as f:
+with open("inputs/d02input.txt") as f:
     lineFiles = f.readlines()
 
 

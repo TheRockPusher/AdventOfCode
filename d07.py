@@ -1,4 +1,4 @@
-with open("inputs/d7input.txt") as f:
+with open("inputs/d07input.txt") as f:
     lineFiles = f.readlines()
 
 

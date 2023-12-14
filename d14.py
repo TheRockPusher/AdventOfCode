@@ -1,5 +1,5 @@
-import time
 import copy
+import time
 
 with open("inputs/d14input.txt") as f:
     lineFiles = f.readlines()

@@ -1,7 +1,7 @@
 import fnmatch
 from math import lcm
 
-with open("inputs/d8input.txt") as f:
+with open("inputs/d08input.txt") as f:
     lineFiles = f.readlines()
 
 directions = lineFiles[0].replace("\n", "")

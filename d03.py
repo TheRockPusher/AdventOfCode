@@ -1,6 +1,6 @@
 from typing import Optional
 
-with open("inputs/d3input.txt") as f:
+with open("inputs/d03input.txt") as f:
     lineFiles = f.readlines()
 
 
