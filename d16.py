@@ -58,14 +58,13 @@ def full_energize(mirrorMap: list[str], startBeam: beam) -> set[tuple[int, int]]
             iBeam.movement()
             if iBeam.outside(max_x, max_y):
                 objects_delete.append(iBeam)
-            else:
-                if mirrorMap[iBeam.y][iBeam.x] != ".":
-                    childBeam = iBeam.collision(mirrorMap[iBeam.y][iBeam.x])
-                    if childBeam and (childBeam.x, childBeam.y) in pipe_coord:
-                        objects_delete.append(iBeam)
-                    elif childBeam:
-                        pipe_coord.append((childBeam.x, childBeam.y))
-                        startBeams.append(childBeam)
+            elif mirrorMap[iBeam.y][iBeam.x] != ".":
+                childBeam = iBeam.collision(mirrorMap[iBeam.y][iBeam.x])
+                if childBeam and (childBeam.x, childBeam.y) in pipe_coord:
+                    objects_delete.append(iBeam)
+                elif childBeam:
+                    pipe_coord.append((childBeam.x, childBeam.y))
+                    startBeams.append(childBeam)
         for beams in objects_delete:
             historySet = historySet.union(set(beams.history))
         startBeams = [beams for beams in startBeams if beams not in objects_delete]
