@@ -24,9 +24,9 @@ def previous_neighbour_path(
 
 
 def return_neighbours(
-    path: list[str], coord: Coordinates, max_straight: int
+    path: list[str], coord: Coordinates, max_straight: int, min_straight: int
 ) -> list[Coordinates]:
-    return [
+    possibilitiesUnderMax = [
         c
         for c in [
             previous_neighbour_path(coord, (1, 0)),
@@ -42,9 +42,15 @@ def return_neighbours(
         and abs(c.past_y) <= max_straight
         and (abs(c.past_x) > abs(coord.past_x) or abs(c.past_y) > abs(coord.past_y))
     ]
+    return (
+        possibilitiesUnderMax
+        if max((abs(coord.past_x), abs(coord.past_y))) >= min_straight
+        or (coord.x, coord.y) == (0, 0)
+        else [p for p in possibilitiesUnderMax if abs(p.past_x) + abs(p.past_y) > 1]
+    )
 
 
-def pathfinding(path: list[str], max_straight: int):
+def pathfinding(path: list[str], max_straight: int, min_straight: int = 0):
     startCoordinate = Coordinates(0, 0, 0, 0)
     frontier: PriorityQueue[tuple[int, Coordinates]] = PriorityQueue()
     frontier.put((0, startCoordinate))
@@ -53,9 +59,9 @@ def pathfinding(path: list[str], max_straight: int):
 
     while not frontier.empty():
         _, current = frontier.get()
-        if (current.x, current.y) == (len(path[0]) - 1, len(path) - 1):
-            break
-        for next in return_neighbours(path, current, max_straight):
+        # if (current.x, current.y) == (len(path[0]) - 1, len(path) - 1):
+        #     break
+        for next in return_neighbours(path, current, max_straight, min_straight):
             next_cost = cumulative_cost[current] + int(path[current.y][current.x])
             if next not in cumulative_cost or next_cost < cumulative_cost[next]:
                 cumulative_cost[next] = next_cost
@@ -74,5 +80,20 @@ lastCoordPossibilities = [
     for i, val in coordCostDict.items()
     if i.x == len(path[0]) - 1 and i.y == len(path) - 1
 ]
-print(lastCoordPossibilities)
 print(f"Result of part 1 -> {min([val[1]+factor for val in lastCoordPossibilities])}")
+
+minimumPath = 4
+coordCostDict, _ = pathfinding(path, 10, minimumPath)
+# in exercise first values doesn't count but last does
+factor = int(path[-1][-1]) - int(path[0][0])
+lastCoordPossibilities = [
+    (i, val)
+    for i, val in coordCostDict.items()
+    if i.x == len(path[0]) - 1 and i.y == len(path) - 1
+]
+withMinimumEnding = [
+    i
+    for i in lastCoordPossibilities
+    if abs(i[0].past_x) + abs(i[0].past_y) >= minimumPath
+]
+print(f"Result of part 2 -> {min([val[1]+factor for val in withMinimumEnding])}")
