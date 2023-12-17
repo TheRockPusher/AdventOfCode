@@ -1,5 +1,5 @@
-from queue import PriorityQueue
 from dataclasses import dataclass
+from queue import PriorityQueue
 
 with open("inputs/d17input.txt") as f:
     lineFile = f.readlines()
@@ -40,6 +40,7 @@ def return_neighbours(
         and c.y < len(path)
         and abs(c.past_x) <= max_straight
         and abs(c.past_y) <= max_straight
+        and (abs(c.past_x) > abs(coord.past_x) or abs(c.past_y) > abs(coord.past_y))
     ]
 
 
@@ -55,9 +56,7 @@ def pathfinding(path: list[str], max_straight: int):
         if (current.x, current.y) == (len(path[0]) - 1, len(path) - 1):
             break
         for next in return_neighbours(path, current, max_straight):
-            next_cost = cumulative_cost[current] + int(
-                path[current.y][current.x]
-            )
+            next_cost = cumulative_cost[current] + int(path[current.y][current.x])
             if next not in cumulative_cost or next_cost < cumulative_cost[next]:
                 cumulative_cost[next] = next_cost
                 came_from[next] = current
@@ -65,9 +64,15 @@ def pathfinding(path: list[str], max_straight: int):
 
     return cumulative_cost, came_from
 
+
 path = [x.replace("\n", "") for x in lineFile]
-coordCostDict, _ = pathfinding(path,3)
-#in exercise first values doesn count but last does
-factor = int(path[-1][-1])-int(path[0][0])
-lastCoordPossibilities = [i for i in coordCostDict if i.x == len(path[0])-1 and i.y == len(path)-1]
-print(f"Result of part 1 -> {min([coordCostDict[i]+factor for i in lastCoordPossibilities])}")
+coordCostDict, _ = pathfinding(path, 3)
+# in exercise first values doesn't count but last does
+factor = int(path[-1][-1]) - int(path[0][0])
+lastCoordPossibilities = [
+    (i, val)
+    for i, val in coordCostDict.items()
+    if i.x == len(path[0]) - 1 and i.y == len(path) - 1
+]
+print(lastCoordPossibilities)
+print(f"Result of part 1 -> {min([val[1]+factor for val in lastCoordPossibilities])}")
