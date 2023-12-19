@@ -1,6 +1,6 @@
-from typing import NamedTuple
+from typing import NamedTuple, cast
 
-with open("inputs/test.txt") as f:
+with open("inputs/d19input.txt") as f:
     lineFile = f.readlines()
 
 part = NamedTuple("part", [("x", int), ("m", int), ("a", int), ("s", int)])
@@ -137,14 +137,14 @@ def range_returner(rng: ranger, fun: tuple[str, str]) -> tuple[ranger, ranger]:
             match fun[0][0]:
                 case "x":
                     compliment_ranger = ranger(
-                        rng.x[: int(fun[0].split(">")[1]) - rng.x[0]],
+                        rng.x[: int(fun[0].split(">")[1]) - rng.x[0] + 1],
                         rng.m,
                         rng.a,
                         rng.s,
                         mapping,
                     )
                     main_ranger = ranger(
-                        rng.x[int(fun[0].split(">")[1]) - rng.x[0] :],
+                        rng.x[int(fun[0].split(">")[1]) - rng.x[0] + 1 :],
                         rng.m,
                         rng.a,
                         rng.s,
@@ -153,14 +153,14 @@ def range_returner(rng: ranger, fun: tuple[str, str]) -> tuple[ranger, ranger]:
                 case "m":
                     compliment_ranger = ranger(
                         rng.x,
-                        rng.m[: int(fun[0].split(">")[1]) - rng.m[0]],
+                        rng.m[: int(fun[0].split(">")[1]) - rng.m[0] + 1],
                         rng.a,
                         rng.s,
                         mapping,
                     )
                     main_ranger = ranger(
                         rng.x,
-                        rng.m[int(fun[0].split(">")[1]) - rng.m[0] :],
+                        rng.m[int(fun[0].split(">")[1]) - rng.m[0] + 1 :],
                         rng.a,
                         rng.s,
                         mapping,
@@ -169,14 +169,14 @@ def range_returner(rng: ranger, fun: tuple[str, str]) -> tuple[ranger, ranger]:
                     compliment_ranger = ranger(
                         rng.x,
                         rng.m,
-                        rng.a[: int(fun[0].split(">")[1]) - rng.a[0]],
+                        rng.a[: int(fun[0].split(">")[1]) - rng.a[0] + 1],
                         rng.s,
                         mapping,
                     )
                     main_ranger = ranger(
                         rng.x,
                         rng.m,
-                        rng.a[int(fun[0].split(">")[1]) - rng.a[0] :],
+                        rng.a[int(fun[0].split(">")[1]) - rng.a[0] + 1 :],
                         rng.s,
                         mapping,
                     )
@@ -185,14 +185,14 @@ def range_returner(rng: ranger, fun: tuple[str, str]) -> tuple[ranger, ranger]:
                         rng.x,
                         rng.m,
                         rng.a,
-                        rng.s[: int(fun[0].split(">")[1]) - rng.s[0]],
+                        rng.s[: int(fun[0].split(">")[1]) - rng.s[0] + 1],
                         mapping,
                     )
                     main_ranger = ranger(
                         rng.x,
                         rng.m,
                         rng.a,
-                        rng.s[int(fun[0].split(">")[1]) - rng.s[0] :],
+                        rng.s[int(fun[0].split(">")[1]) - rng.s[0] + 1 :],
                         mapping,
                     )
 
@@ -208,6 +208,7 @@ def range_splitter(
         compliment_ranger = ranger_i
         for m in mapping_dict[ranger_i.mapping]:
             if m[1]:
+                m = cast(tuple[str, str], m)
                 main_ranger, compliment_ranger = range_returner(compliment_ranger, m)
             else:
                 main_ranger = ranger(
@@ -234,7 +235,7 @@ print(f"Result of part 1 -> {sum([sum([p.x, p.m, p.a, p.s]) for p in accepted_pa
 
 
 start_range = ranger(
-    range(0, 5000), range(0, 5000), range(0, 5000), range(0, 5000), "in"
+    range(1, 4001), range(1, 4001), range(1, 4001), range(1, 4001), "in"
 )
 ranger_list = [start_range]
 accepted_list: list[ranger] = []
@@ -242,7 +243,5 @@ while ranger_list:
     ranger_list = range_splitter(mapping_dict, ranger_list)
     accepted_list.extend([r for r in ranger_list if r.mapping == "A"])
     ranger_list = [r for r in ranger_list if r.mapping not in ["A", "R"]]
-print(f"{sum([len(r.x)*len(r.s)*len(r.a)*len(r.m) for r in accepted_list])}")
-print("167409079868000")
-
-# 299176363191761  too high
+resP2 = [len(r.x) * len(r.s) * len(r.a) * len(r.m) for r in accepted_list]
+print(f"Result of part 2 -> {sum(resP2)}")
