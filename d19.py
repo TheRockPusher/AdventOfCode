@@ -1,9 +1,12 @@
 from typing import NamedTuple
 
-with open("inputs/d19input.txt") as f:
+with open("inputs/test.txt") as f:
     lineFile = f.readlines()
 
 part = NamedTuple("part", [("x", int), ("m", int), ("a", int), ("s", int)])
+ranger = NamedTuple(
+    "ranger", [("x", range), ("m", range), ("a", range), ("s", range), ("mapping", str)]
+)
 
 raw_map = lineFile[: lineFile.index("\n")]
 ratings_list = lineFile[lineFile.index("\n") + 1 :]
@@ -64,6 +67,161 @@ def process_rating_once(
     return mapping[-1][0]
 
 
+def range_returner(rng: ranger, fun: tuple[str, str]) -> tuple[ranger, ranger]:
+    mapping = fun[1]
+    match fun[0][1]:
+        case "<":
+            match fun[0][0]:
+                case "x":
+                    main_ranger = ranger(
+                        rng.x[: int(fun[0].split("<")[1]) - rng.x[0]],
+                        rng.m,
+                        rng.a,
+                        rng.s,
+                        mapping,
+                    )
+                    compliment_ranger = ranger(
+                        rng.x[int(fun[0].split("<")[1]) - rng.x[0] :],
+                        rng.m,
+                        rng.a,
+                        rng.s,
+                        mapping,
+                    )
+                case "m":
+                    main_ranger = ranger(
+                        rng.x,
+                        rng.m[: int(fun[0].split("<")[1]) - rng.m[0]],
+                        rng.a,
+                        rng.s,
+                        mapping,
+                    )
+                    compliment_ranger = ranger(
+                        rng.x,
+                        rng.m[int(fun[0].split("<")[1]) - rng.m[0] :],
+                        rng.a,
+                        rng.s,
+                        mapping,
+                    )
+                case "a":
+                    main_ranger = ranger(
+                        rng.x,
+                        rng.m,
+                        rng.a[: int(fun[0].split("<")[1]) - rng.a[0]],
+                        rng.s,
+                        mapping,
+                    )
+                    compliment_ranger = ranger(
+                        rng.x,
+                        rng.m,
+                        rng.a[int(fun[0].split("<")[1]) - rng.a[0] :],
+                        rng.s,
+                        mapping,
+                    )
+                case "s":
+                    main_ranger = ranger(
+                        rng.x,
+                        rng.m,
+                        rng.a,
+                        rng.s[: int(fun[0].split("<")[1]) - rng.s[0]],
+                        mapping,
+                    )
+                    compliment_ranger = ranger(
+                        rng.x,
+                        rng.m,
+                        rng.a,
+                        rng.s[int(fun[0].split("<")[1]) - rng.s[0] :],
+                        mapping,
+                    )
+
+        case ">":
+            match fun[0][0]:
+                case "x":
+                    compliment_ranger = ranger(
+                        rng.x[: int(fun[0].split(">")[1]) - rng.x[0]],
+                        rng.m,
+                        rng.a,
+                        rng.s,
+                        mapping,
+                    )
+                    main_ranger = ranger(
+                        rng.x[int(fun[0].split(">")[1]) - rng.x[0] :],
+                        rng.m,
+                        rng.a,
+                        rng.s,
+                        mapping,
+                    )
+                case "m":
+                    compliment_ranger = ranger(
+                        rng.x,
+                        rng.m[: int(fun[0].split(">")[1]) - rng.m[0]],
+                        rng.a,
+                        rng.s,
+                        mapping,
+                    )
+                    main_ranger = ranger(
+                        rng.x,
+                        rng.m[int(fun[0].split(">")[1]) - rng.m[0] :],
+                        rng.a,
+                        rng.s,
+                        mapping,
+                    )
+                case "a":
+                    compliment_ranger = ranger(
+                        rng.x,
+                        rng.m,
+                        rng.a[: int(fun[0].split(">")[1]) - rng.a[0]],
+                        rng.s,
+                        mapping,
+                    )
+                    main_ranger = ranger(
+                        rng.x,
+                        rng.m,
+                        rng.a[int(fun[0].split(">")[1]) - rng.a[0] :],
+                        rng.s,
+                        mapping,
+                    )
+                case "s":
+                    compliment_ranger = ranger(
+                        rng.x,
+                        rng.m,
+                        rng.a,
+                        rng.s[: int(fun[0].split(">")[1]) - rng.s[0]],
+                        mapping,
+                    )
+                    main_ranger = ranger(
+                        rng.x,
+                        rng.m,
+                        rng.a,
+                        rng.s[int(fun[0].split(">")[1]) - rng.s[0] :],
+                        mapping,
+                    )
+
+    return main_ranger, compliment_ranger
+
+
+def range_splitter(
+    mapping_dict: dict[str, list[tuple[str, str | None]]], ranges: list[ranger]
+) -> list[ranger]:
+    res: list[ranger] = []
+    for ranger_i in ranges:
+        main_ranger = ranger_i
+        compliment_ranger = ranger_i
+        for m in mapping_dict[ranger_i.mapping]:
+            if m[1]:
+                main_ranger, compliment_ranger = range_returner(compliment_ranger, m)
+            else:
+                main_ranger = ranger(
+                    compliment_ranger.x,
+                    compliment_ranger.m,
+                    compliment_ranger.a,
+                    compliment_ranger.s,
+                    m[0],
+                )
+
+            res.append(main_ranger)
+    return res
+
+
 accepted_parts: list[part] = []
 for part_i in parts_list:
     node = "in"
@@ -73,3 +231,18 @@ for part_i in parts_list:
         accepted_parts.append(part_i)
 
 print(f"Result of part 1 -> {sum([sum([p.x, p.m, p.a, p.s]) for p in accepted_parts])}")
+
+
+start_range = ranger(
+    range(0, 5000), range(0, 5000), range(0, 5000), range(0, 5000), "in"
+)
+ranger_list = [start_range]
+accepted_list: list[ranger] = []
+while ranger_list:
+    ranger_list = range_splitter(mapping_dict, ranger_list)
+    accepted_list.extend([r for r in ranger_list if r.mapping == "A"])
+    ranger_list = [r for r in ranger_list if r.mapping not in ["A", "R"]]
+print(f"{sum([len(r.x)*len(r.s)*len(r.a)*len(r.m) for r in accepted_list])}")
+print("167409079868000")
+
+# 299176363191761  too high
