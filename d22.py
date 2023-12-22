@@ -1,4 +1,5 @@
 from collections import defaultdict
+from copy import deepcopy
 from dataclasses import dataclass
 
 
@@ -39,11 +40,13 @@ def range_intercepts(block1: block, block2: block) -> bool:
     )
 
 
-def drop_blocks(block_dict: dict[int, set[block]]) -> dict[int, set[block]]:
+def drop_blocks(block_dict: dict[int, set[block]]) -> tuple[dict[int, set[block]], int]:
     dropped_block_dict: dict[int, set[block]] = defaultdict(set)
+    counter_drops: int = 0
     for i in range(1, max(block_dict.keys()) + 1):
         for block_i in block_dict[i]:
             descent = 0
+            drop = False
             while descent < (block_i.z[0] - 1) and (
                 dropped_block_dict.get(block_i.z[0] - 1 - descent, 0) == 0
                 or not any(
@@ -56,13 +59,16 @@ def drop_blocks(block_dict: dict[int, set[block]]) -> dict[int, set[block]]:
                 )
             ):
                 descent += 1
+                drop = True
             new_z_start = block_i.z[0] - descent
             new_z_end = block_i.z[-1] - descent
             dropped_block_dict[new_z_end].add(
                 block(block_i.x, block_i.y, range(new_z_start, new_z_end + 1))
             )
+            if drop:
+                counter_drops += 1
 
-    return dropped_block_dict
+    return dropped_block_dict, counter_drops
 
 
 def count_who_single_holds(block_dict: dict[int, set[block]]) -> set[block]:
@@ -80,11 +86,19 @@ def count_who_single_holds(block_dict: dict[int, set[block]]) -> set[block]:
     return set_who_single_holds
 
 
-dropped_blocks = drop_blocks(load_blocks(lineFiles))
+def count_who_drops(set_who_single_holds, block_dict) -> list[int]:
+    list_drops: list[int] = []
+    for block_i in set_who_single_holds:
+        new_block_dict = deepcopy(block_dict)
+        new_block_dict[block_i.z[-1]] = new_block_dict[block_i.z[-1]] - {block_i}
+        _, drops = drop_blocks(new_block_dict)
+        list_drops.append(drops)
+
+    return list_drops
+
+
+dropped_blocks, _ = drop_blocks(load_blocks(lineFiles))
 set_of_who_holds = count_who_single_holds(dropped_blocks)
 
 print(f"Result of part 1 -> {len(lineFiles)- len(set_of_who_holds)}")
-# print(set_of_who_holds)
-# for i in dropped_blocks.values():
-#     for j in i:
-#         print(j)
+print(f"Result of part 2 -> {sum(count_who_drops(set_of_who_holds, dropped_blocks))}")
