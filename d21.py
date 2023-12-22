@@ -1,6 +1,6 @@
+from collections import Counter
 from dataclasses import dataclass
 from queue import Queue
-from collections import Counter
 
 with open("inputs/d21input.txt") as f:
     lineFile = f.readlines()
