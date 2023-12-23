@@ -15,18 +15,23 @@ class current_path:
     past_path: set[tuple] = field(default_factory=set)
 
 
-def get_neighbours(curr: current_path, text) -> list[current_path]:
-    match curr.path:
-        case ".":
-            mov_possibilities = [(-1, 0), (1, 0), (0, 1), (0, -1)]
-        case ">":
-            mov_possibilities = [(1, 0)]
-        case "<":
-            mov_possibilities = [(-1, 0)]
-        case "v":
-            mov_possibilities = [(0, 1)]
-        case "^":
-            mov_possibilities = [(0, -1)]
+def get_neighbours(
+    curr: current_path, text: list[str], slippery: bool = True
+) -> list[current_path]:
+    if slippery:
+        match curr.path:
+            case ".":
+                mov_possibilities = [(-1, 0), (1, 0), (0, 1), (0, -1)]
+            case ">":
+                mov_possibilities = [(1, 0)]
+            case "<":
+                mov_possibilities = [(-1, 0)]
+            case "v":
+                mov_possibilities = [(0, 1)]
+            case "^":
+                mov_possibilities = [(0, -1)]
+    else:
+        mov_possibilities = [(-1, 0), (1, 0), (0, 1), (0, -1)]
 
     res = [
         current_path(x, y, char, curr.past_path.union({(curr.x, curr.y)}))
@@ -42,7 +47,7 @@ def get_neighbours(curr: current_path, text) -> list[current_path]:
     return res
 
 
-def find_longest_path(text: list[str]):
+def find_longest_path(text: list[str], slippery: bool = True):
     long_path = 0
     frontier: Queue[current_path] = Queue()
     start_node = current_path(1, 0, text[0][1])
@@ -51,7 +56,7 @@ def find_longest_path(text: list[str]):
     while not frontier.empty():
         curr = frontier.get()
         if (curr.x, curr.y) != (len(text[0]) - 2, len(text) - 1):
-            for next in get_neighbours(curr, text):
+            for next in get_neighbours(curr, text, slippery):
                 frontier.put(next)
         else:
             long_path = max(long_path, len(curr.past_path))
