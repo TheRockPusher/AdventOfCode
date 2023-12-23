@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass, field
 from queue import Queue
 
@@ -64,5 +65,65 @@ def find_longest_path(text: list[str], slippery: bool = True):
     return long_path
 
 
+def no_split(text: list[str], curr: current_path, slippery):
+    distance = 1
+    past = curr
+    next = get_neighbours(curr, text, slippery)
+    while len(next) == 1:
+        if (next[0].x, next[0].y) == (len(text[0]) - 2, len(text) - 1):
+            return distance, next[0], []
+        past = next[0]
+        next = get_neighbours(next[0], text, slippery)
+        distance += 1
+    return distance, past, next
+
+
+def node_transversal(text: list[str], slippery=True):
+    frontier: Queue[tuple[current_path, current_path]] = Queue()
+    start_node = current_path(1, 0, text[0][1])
+    frontier.put((start_node, start_node))
+    node_dict: dict[tuple[int, int], list[tuple[tuple[int, int], int]]] = {}
+    ran_nodes = {(1, 0)}
+
+    while not frontier.empty():
+        curr, past_node = frontier.get()
+        distance, node, next = no_split(text, curr, slippery)
+        if (node.x, node.y) not in ran_nodes:
+            ran_nodes.add((past_node.x, past_node.y))
+            node_dict[(node.x, node.y)] = node_dict.get((node.x, node.y), []) + [
+                ((past_node.x, past_node.y), distance)
+            ]
+            node_dict[(past_node.x, past_node.y)] = node_dict.get(
+                (past_node.x, past_node.y), []
+            ) + [((node.x, node.y), distance)]
+            for next_i in next:
+                frontier.put((next_i, node))
+    return node_dict
+
+
+def find_longest_path_graph(
+    graph: dict[tuple[int, int], list[tuple[tuple[int, int], int]]], end: tuple
+):
+    long_path = []
+    frontier: Queue[tuple[tuple[int, int], list, int]] = Queue()
+    start_node: tuple[tuple[int, int], list, int] = ((1, 0), [(1, 0)], 0)
+    frontier.put(start_node)
+
+    while not frontier.empty():
+        node, past, old_distance = frontier.get()
+        for nodes in set(graph[node]):
+            if nodes[0] not in past:
+                frontier.put(
+                    (nodes[0], deepcopy(past + [nodes[0]]), old_distance + nodes[1])
+                )
+            if nodes[0] == end:
+                long_path.append(old_distance + nodes[1])
+    return max(long_path)
+
+
 treated_text = [line.replace("\n", "") for line in lineFiles]
 print(f"Result of part 1 -> {find_longest_path(treated_text)}")
+graph2 = node_transversal(treated_text, False)
+end = (len(treated_text[0]) - 2, len(treated_text) - 1)
+# Slow, could be optimized
+print(f"Result of part 2 -> {find_longest_path_graph(graph2, end)}")
