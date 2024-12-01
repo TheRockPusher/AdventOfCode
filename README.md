@@ -6,4 +6,4 @@
 
 Using simple python solutions
 
-sympy library needed for day24 part 2
+[2023] - sympy library needed for day24 part 2
