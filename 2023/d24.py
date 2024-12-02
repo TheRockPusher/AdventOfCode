@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from sympy import Symbol, solve
 
-with open("inputs/d24input.txt") as f:
+with open("2023/inputs/d24input.txt") as f:
     lineFiles = f.readlines()
 
 

@@ -1,6 +1,6 @@
 from typing import Optional
 
-with open("inputs/d13input.txt") as f:
+with open("2023/inputs/d13input.txt") as f:
     lineFiles = f.readlines()
 
 patterns = [group.splitlines() for group in "".join(lineFiles).split("\n\n") if group]

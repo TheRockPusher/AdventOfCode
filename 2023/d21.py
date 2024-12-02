@@ -2,7 +2,7 @@ from collections import Counter
 from dataclasses import dataclass
 from queue import Queue
 
-with open("inputs/d21input.txt") as f:
+with open("2023/inputs/d21input.txt") as f:
     lineFile = f.readlines()
 
 lineFile = [line.replace("\n", "") for line in lineFile]

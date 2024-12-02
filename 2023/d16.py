@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import reduce
 
-with open("inputs/d16input.txt") as f:
+with open("2023/inputs/d16input.txt") as f:
     lineFile = f.readlines()
 
 

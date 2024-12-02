@@ -1,4 +1,4 @@
-with open("inputs/d04input.txt") as f:
+with open("2023/inputs/d04input.txt") as f:
     lineFiles = f.readlines()
 
 

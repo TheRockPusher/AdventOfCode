@@ -10,7 +10,7 @@ class block:
     z: range
 
 
-with open("inputs/d22input.txt") as f:
+with open("2023/inputs/d22input.txt") as f:
     lineFiles = f.readlines()
 
 

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from queue import PriorityQueue
 
-with open("inputs/d17input.txt") as f:
+with open("2023/inputs/d17input.txt") as f:
     lineFile = f.readlines()
 
 

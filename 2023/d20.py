@@ -5,7 +5,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from math import lcm
 
-with open("inputs/d20input.txt") as f:
+with open("2023/inputs/d20input.txt") as f:
     lineFiles = f.readlines()
 
 

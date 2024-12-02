@@ -1,6 +1,6 @@
 from typing import NamedTuple, cast
 
-with open("inputs/d19input.txt") as f:
+with open("2023/inputs/d19input.txt") as f:
     lineFile = f.readlines()
 
 part = NamedTuple("part", [("x", int), ("m", int), ("a", int), ("s", int)])

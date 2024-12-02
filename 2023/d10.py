@@ -13,7 +13,7 @@ class Vector:
         return Vector(x=self.x - other.x, y=self.y - other.y)
 
 
-with open("inputs/d10input.txt") as f:
+with open("2023/inputs/d10input.txt") as f:
     lineFiles = f.readlines()
 
 # translation (x,y)

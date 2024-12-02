@@ -4,7 +4,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from queue import Queue
 
-with open("inputs/d23input.txt") as f:
+with open("2023/inputs/d23input.txt") as f:
     lineFiles = f.readlines()
 
 

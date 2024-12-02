@@ -2,7 +2,7 @@ from collections import Counter, defaultdict
 from queue import Queue
 from random import choices
 
-with open("inputs/d25input.txt") as f:
+with open("2023/inputs/d25input.txt") as f:
     lineFiles = f.readlines()
 
 

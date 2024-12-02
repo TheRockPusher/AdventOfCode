@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-with open("inputs/d15input.txt") as f:
+with open("2023/inputs/d15input.txt") as f:
     lineFile = f.readlines()
 
 

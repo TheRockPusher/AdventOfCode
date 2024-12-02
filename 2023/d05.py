@@ -1,6 +1,6 @@
 import time
 
-with open("inputs/d05input.txt") as f:
+with open("2023/inputs/d05input.txt") as f:
     lineFiles = f.readlines()
 
 

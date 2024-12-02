@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-with open("inputs/d18input.txt") as f:
+with open("2023/inputs/d18input.txt") as f:
     lineFile = f.readlines()
 
 dig_step = NamedTuple("dig_step", [("direction", str), ("stepsN", int), ("color", str)])

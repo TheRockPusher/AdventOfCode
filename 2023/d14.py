@@ -1,7 +1,7 @@
 import copy
 import time
 
-with open("inputs/d14input.txt") as f:
+with open("2023/inputs/d14input.txt") as f:
     lineFiles = f.readlines()
 
 
