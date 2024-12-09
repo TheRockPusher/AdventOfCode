@@ -55,10 +55,44 @@ def checksumCalc(memoryList: list[memoryBlock]) -> int:
     i = 0
     res = 0
     for block in memoryList:
-        res += sum([index * block.ID for index in range(i, i + block.length)])
+        res += sum(
+            [index * block.ID for index in range(i, i + block.length) if block.ID != -1]
+        )
         i += block.length
     return res
 
 
 cleanedCompactedLines = [block for block in compaction(listLines) if block.length != 0]
 print(f"Exercise 1 -> {checksumCalc(cleanedCompactedLines)}")
+
+
+def compactionAntiFragmentation(
+    memoryListOriginal: list[memoryBlock],
+) -> list[memoryBlock]:
+    memoryList: list[memoryBlock] = deepcopy(memoryListOriginal)
+    i = 0
+    while i < len(memoryList):
+        block = memoryList[-(i + 1)]
+        if block.ID != -1:
+            for j, forwardBlock in enumerate(memoryList):
+                if block.ID == forwardBlock.ID:
+                    break
+                if forwardBlock.ID == -1 and forwardBlock.length == block.length:
+                    memoryList[-(i + 1)] = memoryBlock(-1, block.length)
+                    memoryList[j] = block
+                    break
+                if forwardBlock.ID == -1 and forwardBlock.length > block.length:
+                    memoryList[-(i + 1)] = memoryBlock(-1, block.length)
+                    memoryList[j : j + 1] = [
+                        block,
+                        memoryBlock(-1, forwardBlock.length - block.length),
+                    ]
+                    break
+        i += 1
+    return memoryList
+
+
+cleanedCompactedAntiFragmentationLines = [
+    block for block in compactionAntiFragmentation(listLines) if block.length != 0
+]
+print(f"Exercise 2 -> {checksumCalc(cleanedCompactedAntiFragmentationLines)}")
