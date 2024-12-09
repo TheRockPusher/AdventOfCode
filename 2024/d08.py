@@ -34,8 +34,18 @@ def dictMaker(listLines) -> dict[str, set[Coordinate]]:
     return dictLines
 
 
-def antiNode(C1: Coordinate, C2: Coordinate) -> set[Coordinate]:
+def antiNode(
+    C1: Coordinate, C2: Coordinate, harmonics: bool = False
+) -> set[Coordinate]:
     DistanceVector = C1 - C2
+    if harmonics:
+        possibleSet = {C1, C2}
+        for i, d in enumerate([C1 + DistanceVector, C2 - DistanceVector]):
+            while d.valid(len(listLines[0]), len(listLines)):
+                possibleSet.add(d)
+                d = d - DistanceVector if i else d + DistanceVector
+        return possibleSet
+
     return set(
         c
         for c in [C1 + DistanceVector, C2 - DistanceVector]
@@ -43,10 +53,10 @@ def antiNode(C1: Coordinate, C2: Coordinate) -> set[Coordinate]:
     )
 
 
-def antiNodeListCalc(CoordSet: set[Coordinate]) -> set[Coordinate]:
+def antiNodeListCalc(CoordSet: set[Coordinate], harmonics=False) -> set[Coordinate]:
     CoordList = list(CoordSet)
     listSets = [
-        antiNode(C1, C2)
+        antiNode(C1, C2, harmonics)
         for i, C1 in enumerate(CoordList)
         for C2 in CoordList[i + 1 :]
         if i < len(CoordList)
@@ -59,5 +69,9 @@ totalSet = set()
 for values in dictLines.values():
     totalSet.update(antiNodeListCalc(values))
 
-
 print(f"Result Ex 1 -> {len(totalSet)}")
+totalSet2 = set()
+for values in dictLines.values():
+    totalSet2.update(antiNodeListCalc(values, harmonics=True))
+
+print(f"Result Ex 2 -> {len(totalSet2)}")
