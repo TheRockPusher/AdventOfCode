@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 with open("2024/inputs/d08input.txt") as f:
-    listLines = [line.strip() for line in f.readlines()]
+    listLines: list[str] = [line.strip() for line in f.readlines()]
 
 
 @dataclass(frozen=True)
@@ -55,7 +55,7 @@ def antiNode(
 
 def antiNodeListCalc(CoordSet: set[Coordinate], harmonics=False) -> set[Coordinate]:
     CoordList = list(CoordSet)
-    listSets = [
+    listSets: list[set[Coordinate]] = [
         antiNode(C1, C2, harmonics)
         for i, C1 in enumerate(CoordList)
         for C2 in CoordList[i + 1 :]
@@ -64,14 +64,13 @@ def antiNodeListCalc(CoordSet: set[Coordinate], harmonics=False) -> set[Coordina
     return {c for coordSet in listSets for c in coordSet}
 
 
-dictLines = dictMaker(listLines)
+dictLines: dict[str, set[Coordinate]] = dictMaker(listLines)
 totalSet = set()
-for values in dictLines.values():
-    totalSet.update(antiNodeListCalc(values))
-
-print(f"Result Ex 1 -> {len(totalSet)}")
 totalSet2 = set()
 for values in dictLines.values():
+    totalSet.update(antiNodeListCalc(values))
     totalSet2.update(antiNodeListCalc(values, harmonics=True))
+
+print(f"Result Ex 1 -> {len(totalSet)}")
 
 print(f"Result Ex 2 -> {len(totalSet2)}")
