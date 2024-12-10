@@ -9,9 +9,11 @@ def countTrailheadScore(
     coord: tuple[int, int],
     value: int,
     past: list[tuple[int, int]],
+    rating: bool = False,
 ) -> int:
     x, y = coord
-    past += [(x, y)]
+    if not rating:
+        past += [(x, y)]
     if value == 9:
         return 1
     maxX = len(topographicMap[0])
@@ -19,7 +21,7 @@ def countTrailheadScore(
     total = 0
     for new_x, new_y in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
         total += (
-            countTrailheadScore(topographicMap, (new_x, new_y), value + 1, past)
+            countTrailheadScore(topographicMap, (new_x, new_y), value + 1, past, rating)
             if 0 <= new_x < maxX
             and 0 <= new_y < maxY
             and topographicMap[new_y][new_x] == value + 1
@@ -39,3 +41,13 @@ total_Trailhead = sum(
 )
 
 print(f"Exercise 1 -> {total_Trailhead}")
+
+total_Trailhead_Rating = sum(
+    [
+        countTrailheadScore(listTopographic, (x, y), 0, list(), True)
+        for y, line in enumerate(listTopographic)
+        for x, value in enumerate(line)
+        if value == 0
+    ]
+)
+print(f"Exercise 2 -> {total_Trailhead_Rating}")
