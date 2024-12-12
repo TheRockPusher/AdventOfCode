@@ -28,16 +28,18 @@ class Region:
         )
     
     def sides(self):
-        currentSides:list[tuple[set[Coordinate],bool]] = []
+        currentSides:list[set[tuple[Coordinate,bool]]] = []
         directions = [Coordinate(1,0),Coordinate(-1,0), Coordinate(0,1), Coordinate(0,-1)]
         for coord, horizontal in self.perimeterCoordinates:
-            coordLookFor = {(coord+direction,horizontal) for direction in directions}
-            intersectedSets:tuple[set[Coordinate],bool] = ({coord},horizontal)
-            for side in currentSides:
-                if coordLookFor&side:
-                    currentSides.remove(side)
-                    intersectedSets = intersectedSets.union((side,horizontal))
-            currentSides.append(intersectedSets)
+            intersectedSide:set[tuple[Coordinate,bool]] = {(coord,horizontal)}
+            for direction in directions:
+                for side in currentSides:
+                    if (coord+direction,horizontal) in side:
+                        intersectedSide=intersectedSide.union(side)
+                        currentSides.remove(side)           
+            currentSides.append(intersectedSide)
+        for side in currentSides:
+            print(side)
         return len(currentSides)
 
 
@@ -69,7 +71,7 @@ def regionCounter(
                 region += newRegion
             else:
                 region.perimeter += 1
-                region.perimeterCoordinates.add((newCoordinate,bool(direction.x)))
+                region.perimeterCoordinates.add((newCoordinate,bool(direction.y)))
 
     return region, seenPlots
 
