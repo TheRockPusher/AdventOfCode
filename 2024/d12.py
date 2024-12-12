@@ -49,8 +49,6 @@ class Region:
                         intersectedSide = intersectedSide.union(side)
                         currentSides.remove(side)
             currentSides.append(intersectedSide)
-        # for side in currentSides:
-        #     print(side)
         return len(currentSides)
 
 
