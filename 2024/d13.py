@@ -83,3 +83,9 @@ result: list[int] = [
     calculate(line[0], line[2], line[1], line[3], line[4], line[5]) for line in endList
 ]
 print(f"Exercise 1 -> {sum(result)}")
+adder = 10000000000000
+resultBig: list[int] = [
+    calculate(line[0], line[2], line[1], line[3], line[4] + adder, line[5] + adder)
+    for line in endList
+]
+print(f"Exercise 2 -> {sum(resultBig)}")
