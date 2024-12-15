@@ -1,5 +1,7 @@
+import math
 import re
 from collections import Counter
+from copy import deepcopy
 from dataclasses import dataclass
 
 
@@ -15,6 +17,7 @@ class Robot:
         newY = self.y + steps * self.vy
         if not 0 <= newX < mapSizeX:
             newX = newX % mapSizeX
+        if not 0 <= newY < mapSizeY:
             newY = newY % mapSizeY
         self.x = newX
         self.y = newY
@@ -55,4 +58,40 @@ def safetyFactor(
     return quadrantCount[1] * quadrantCount[2] * quadrantCount[3] * quadrantCount[4]
 
 
-print(f"Exercise 1 -> {safetyFactor(100,101,103,robotList)}")
+print(f"Exercise 1 -> {safetyFactor(100,101,103,deepcopy(robotList))}")
+
+
+def varianceCalc(mapSizeX: int, mapSizeY: int, robotList: list[Robot]):
+    movedRobots = [robot.move(1, mapSizeX, mapSizeY) for robot in robotList]
+    XY = [(robot.x, robot.y) for robot in movedRobots]
+    allX = 0
+    allY = 0
+    for x, y in XY:
+        allX += x
+        allY += y
+    meanX = allX / len(XY)
+    meanY = allY / len(XY)
+    varX = math.sqrt(sum((v[0] - meanX) ** 2 for v in XY) / len(XY))
+    varY = math.sqrt(sum((v[1] - meanY) ** 2 for v in XY) / len(XY))
+    return (varX, varY, XY, movedRobots)
+
+
+minVar = 10000000
+indexOfMinVar = 0
+r = [(0, 0)]
+movedRobots = robotList
+for i in range(1, 10000):
+    j = varianceCalc(101, 103, movedRobots)
+    if j[0] + j[1] < minVar:
+        minVar = j[0] + j[1]
+        r = j[2]
+        indexOfMinVar = i
+    movedRobots = j[3]
+
+print(f"Exercise 2 -> {indexOfMinVar}")
+
+grid = [["." for _ in range(101)] for _ in range(103)]
+for x, y in r:
+    grid[y][x] = "X"
+for row in reversed(grid):
+    print(" ".join(row))
