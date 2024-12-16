@@ -1,4 +1,5 @@
 from copy import deepcopy
+
 with open("2024/inputs/d15input.txt") as f:
     text: list[str] = f.readlines()
     originalGraph: list[str]= [t.strip() for t in text[:50]]
@@ -20,22 +21,25 @@ def translationCoord(letter:str)->tuple[int,int]:
             raise(ValueError)
         
 i=True
-def push(graph:list[str],coordToPush:tuple[int,int], movement:str, bigBox:bool = False)->bool: 
-    # global i
-    # if i:
-    #     for r in graph:
-    #         print(r)
-    #         i=False
-    #     print(movement)
+j=0
+def push(graph:list[str],coordToPush:tuple[int,int], movement:str)->bool: 
+    global i
+    global j
+    j+=1
+    if i and 370<j<400:
+        print(j)
+        for r in graph:
+            print(r)
+            i=False
+        print(movement)
     movementCoordinates=translationCoord(movement)    
     nextCoord=(coordToPush[0]+movementCoordinates[0], coordToPush[1]+movementCoordinates[1])
     match graph[nextCoord[1]][nextCoord[0]]:
         case "#":
             return False
         case ".":
-            if not bigBox:
-                graph[nextCoord[1]] = graph[nextCoord[1]][:nextCoord[0]]+graph[coordToPush[1]][coordToPush[0]]+graph[nextCoord[1]][nextCoord[0]+1:]
-                graph[coordToPush[1]] = graph[coordToPush[1]][:coordToPush[0]]+ "."+graph[coordToPush[1]][coordToPush[0]+1:]
+            graph[nextCoord[1]] = graph[nextCoord[1]][:nextCoord[0]]+graph[coordToPush[1]][coordToPush[0]]+graph[nextCoord[1]][nextCoord[0]+1:]
+            graph[coordToPush[1]] = graph[coordToPush[1]][:coordToPush[0]]+ "."+graph[coordToPush[1]][coordToPush[0]+1:]
             return True
         case "O":
             if push(graph,nextCoord, movement):
@@ -44,18 +48,26 @@ def push(graph:list[str],coordToPush:tuple[int,int], movement:str, bigBox:bool =
                 return True
             else:
                 return False
-        case "[":
-            otherCoord=(nextCoord[0]+1,nextCoord[1])
-            if push(graph,nextCoord, movement,True) and push(graph,otherCoord, movement,True):
-                pass
+        case w if w in ["[","]"]:
+            if movementCoordinates in [(1,0),(-1,0)]:
+                if push(graph,nextCoord, movement):
+                    graph[nextCoord[1]] = graph[nextCoord[1]][:nextCoord[0]]+graph[coordToPush[1]][coordToPush[0]]+graph[nextCoord[1]][nextCoord[0]+1:]
+                    graph[coordToPush[1]] = graph[coordToPush[1]][:coordToPush[0]]+ "."+graph[coordToPush[1]][coordToPush[0]+1:]
+                    return True
+                else:
+                    return False
             else:
-                return False
-        case "]":
-            otherCoord=(nextCoord[0]-1,nextCoord[1])
-            if push(graph,nextCoord, movement,True) and push(graph,otherCoord, movement,True):
-                pass
-            else:
-                return False     
+                tempGraph = deepcopy(graph)
+                otherNextCoord = (nextCoord[0]+1,nextCoord[1]) if w =="[" else (nextCoord[0]-1,nextCoord[1])
+                otherCoord = (coordToPush[0]+1,coordToPush[1]) if w =="[" else (coordToPush[0]-1,coordToPush[1])
+                if push(graph,nextCoord,movement) and push(graph,otherNextCoord,movement):
+                    graph[nextCoord[1]] = graph[nextCoord[1]][:nextCoord[0]]+graph[coordToPush[1]][coordToPush[0]]+graph[nextCoord[1]][nextCoord[0]+1:]
+                    graph[coordToPush[1]] = graph[coordToPush[1]][:coordToPush[0]]+ "."+graph[coordToPush[1]][coordToPush[0]+1:]
+                    return True
+                else:
+                    graph[:]=tempGraph
+                    return False
+                
         case _:
             print(graph[nextCoord[1]][nextCoord[0]])
             raise (TypeError)
@@ -70,7 +82,7 @@ for y,line in enumerate(mapGraph):
         pass
 # print(movement)
 for singleMovement in movement:
-    i=True
+    i=False
     moved=push(mapGraph,(x,y),singleMovement)
     if moved:
         movementX, movementY= translationCoord(singleMovement)
@@ -95,12 +107,9 @@ for row in originalGraph:
                 raise ValueError
     mapGraphEx2.append(stringToAppend)
 
-
-for row in mapGraphEx2:
-    print(row)
-
 x,y = (-1,-1)      
 for y,line in enumerate(mapGraphEx2):
+    j=0
     try:
         x=line.index("@")
         break
@@ -113,4 +122,6 @@ for singleMovement in movement:
         movementX, movementY= translationCoord(singleMovement)
         x=x+movementX
         y=y+movementY
-print(f"Exercise 1 -> {sum([100*y+x for y,row in enumerate(mapGraphEx2) for x,char in enumerate(row) if char =='['])}")
+print(f"Exercise 2 -> {sum([100*y+x for y,row in enumerate(mapGraphEx2) for x,char in enumerate(row) if char =='['])}")
+for row in mapGraphEx2:
+    print(row)
