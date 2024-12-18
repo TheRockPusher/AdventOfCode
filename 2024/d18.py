@@ -39,16 +39,28 @@ start = Coordinate(0,0)
 end = Coordinate(size,size)
 res = dijkstra(start,end,size,falling_blocks[:1024])
                 
-print(f"Exercise 1 -> {res}")
+print(f"Exercise 1 -> {res[end]}")
 
-# def calculateFinalBlock():
-
-
-# # map = [["."]*size]*size
-# # for c,score in res.items():
-# #     map[c.y][c.x]=str(score)
-# # for c in falling_blocks[:1024]:
-# #     map[c.y][c.x] = "#"
-
-# # for line in map:
-# #     print(line)
+def calculateFinalBlock():
+    i = len(falling_blocks)//2
+    pastResults = {1024:True}
+    biggestTrue = 1024
+    smallestFalse = len(falling_blocks)
+    while True:
+        j=i
+        res = dijkstra(start,end,size,falling_blocks[:i]).get(end,0)
+        if res==0:
+            smallestFalse = i
+            gotToEnd=False
+        else:
+            biggestTrue=i
+            gotToEnd = True
+        pastResults[i]=gotToEnd
+        if gotToEnd^pastResults.get(i-1,gotToEnd) or gotToEnd^pastResults.get(i+1,gotToEnd):
+            if gotToEnd:
+                return i
+            else:
+                return i-1
+        i=(smallestFalse-biggestTrue)//2+biggestTrue
+            
+print(f"Exercise 2 -> {falling_blocks[calculateFinalBlock()]}")
